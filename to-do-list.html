@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-do-list</title>
+    <!-- addButton -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@600&display=swap" rel="stylesheet">
+
+</head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            font-family: 'Noto Sans Arabic', sans-serif;
+        }
+        body{
+            background-color:#638889;
+        }
+
+        #bodyContainer{
+            width: 800px;
+
+            background-color: #EBD9B4;
+            
+        }
+
+        #CenterElementsDiv{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 200px 0;
+        }
+
+        #titleDiv{
+            width: 100%;
+            height:max-content;
+            background-color: #9DBC98;
+            text-align: center;
+            
+        }
+
+
+        .BtnCss{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            line-height: 0;
+        }
+
+        .task{
+           display: flex;
+           justify-content: space-between;
+           width: 100%;
+           background-color: rgb(119, 139, 125);
+           border-bottom: 1px solid rgb(13, 13, 43);
+        }
+        .task:hover{
+            box-shadow: 0px 3px 15px black;
+            transition: box-shadow .3s;
+        }
+
+        
+
+        #resultBody{
+            padding: 15px;
+        }
+        #btnTask{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            width: 25%;
+            margin: 10px;
+            
+        }
+        .BtnCss{
+            background-color: #EBD9B4;
+        }
+        #titleTask{
+            height: auto;
+            word-wrap: break-word;
+        }
+
+        .done{
+            background-color: rgb(138, 233, 138);
+        }
+
+        #addBtn{
+            position: relative;
+            top: 13px;
+            background-color: #81937e;
+        }
+        #addBtn:active{
+            animation: addbtnAnimtation .6s;
+        }
+
+        @keyframes addbtnAnimtation{
+            0%{
+                transform: rotate(0deg)scale(1);
+            }
+            100%{
+                transform: rotate(360deg)scale(1.3);
+            }
+        }
+
+        .removeBtn{
+            color: rgba(255, 80, 80, 0.973);
+            transition: .3s;
+        }
+
+        .removeBtn:hover{
+            background-color: rgba(255, 80, 80, 0.973);
+            color: #fff;
+            
+        }
+
+        .removeBtn:active{     
+            
+            animation: removeanimtation  .6s infinite alternate;
+        }
+
+        @keyframes removeanimtation{
+            0%{
+                transform: rotate(40deg)scale(1.3);
+
+            }
+            50%{
+                transform: rotate(-40deg) scale(1.3);
+            }
+            100%{
+                transform: rotate(40deg) scale(1.3);
+            }
+        }
+
+        .editBtn{
+            color: rgba(35, 160, 209, 0.973);
+            transition:background-color .3s;
+        }
+        .editBtn:hover{
+            background-color:rgba(35, 160, 209, 0.973);
+            color: #fff;
+        }
+
+        .editBtn:active{
+            transform: rotate(360deg)scale(1.3);
+            transition: .6s;
+        }
+
+
+
+        .cancel{
+            color:#fff;
+            transition:background-color .3s ;
+            background-color:rgba(255, 80, 80, 0.973);
+        }
+        .cancel:hover{
+            background-color:rgba(255, 80, 80, 0.973);
+            
+            color:#fff;
+        }
+
+        .check{
+            color: rgba(59, 162, 31, 0.973);
+            transition:background-color .3s ;
+        }
+        .check:hover{
+            background-color:rgba(59, 162, 31, 0.634);
+            color: #fff;
+            
+        }
+
+    </style>
+<body>
+
+    <div id="CenterElementsDiv">
+
+        <div id="bodyContainer">
+
+            <div id="titleDiv">
+                <h1 id="title" style="display: inline;">قائمة المهام</h1>
+                <button id="addBtn" class="BtnCss" style="float: right;position: relative;right: 10px; line-height: 0;">
+                    <span class="material-symbols-outlined" style="font-size: 30px;">
+                        add
+                    </span>
+                </button>
+
+                
+            </div>
+
+            <div id="resultBody">
+
+            </div>
+        </div>
+
+    </div>
+</body>
+
+<script>
+    
+    taskobj = [
+    // {
+    //     "name": "مهمه الاولى",
+    //     "date": "22/1/2024",
+    //     "isDone": false
+    // },
+    // {
+    //     "name": "المهمه الثانيه",
+    //     "date": "28/4/2004",
+    //     "isDone": false
+    // }, 
+    ]
+
+    function getTaskformstorage(){
+        let retrieveTask =JSON.parse(localStorage.getItem("taskobj"))
+        taskobj = retrieveTask ?? []
+    }
+  
+
+    getTaskformstorage()
+
+    function filltaskonthepage(){
+    let index = 0
+    document.getElementById("resultBody").innerHTML = ""
+    for (element of taskobj){
+        let content = `<div class="task ${element.isDone? 'done':''}">
+                        <div style="width: 75%;height: auto;margin:10px;">
+                            <h3 id="titleTask">${element.name}</h3>
+                            <div id="time" style="padding-top:10px; ">
+
+                                <span>
+                                    <span class="material-symbols-outlined" style="font-size:20px; position:relative;top:5px;">
+                                        calendar_month
+                                    </span>
+                                    ${element.date}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div id="btnTask">
+                            <button class="BtnCss removeBtn" onclick="deleteTask(${index})">
+                                <span class="material-symbols-outlined" style="font-size: 30px;">
+                                    delete
+                                </span> 
+                            </button>
+                        ${element.isDone? ` <button class="BtnCss cancel" id="check" onclick="checkTask(${index})"">
+                                                <span class="material-symbols-outlined" style="font-size:30px;">
+                                                    cancel
+                                                </span>   
+                                            </button>`
+
+                                        :`<button class="BtnCss check" id="check" onclick="checkTask(${index})";>
+                                                    <span class="material-symbols-outlined" style="font-size: 30px;">
+                                                        check_circle
+                                                    </span>     
+                                            </button>`
+                        }
+                           
+
+                            <button class="BtnCss editBtn" id="edit" onclick="editTask(${index})">
+                                <span class="material-symbols-outlined" style="font-size: 30px;">
+                                    edit
+                                </span>
+                            </button>
+                        </div>
+
+                    </div>`
+                    
+        document.getElementById("resultBody").innerHTML+= content
+        index++
+    }
+    }
+    filltaskonthepage()
+    document.getElementById("addBtn").addEventListener("click",function(){
+        let now = new Date()
+        let date = now.getDate()+ "/"+(now.getMonth() +1)+ "/"+now.getFullYear() +" | "+ now.getHours()+ ":"+ now.getMinutes()
+        let taskName = prompt("الرجاء ادخال عنوان المهمة:")
+        let equal = {
+            "name": taskName,
+            "date": date,
+            "isDone": false
+        }
+
+
+        if (taskName==null)
+        {
+            alert("الرجاء إدخال عنوان المهمة")
+            
+        }else if (taskName == "") {
+            alert("ارجو ادخال قيمه صالحه")
+        }
+        else{
+            equal.name = taskName
+            taskobj.push(equal)
+        }
+        
+        
+        
+        
+        sotorage()
+        filltaskonthepage()
+
+    })
+
+
+    function deleteTask(index){
+       var result = confirm("هل انته متأكد من حذف "+taskobj[index].name)
+       if (result){
+        taskobj.splice(index,1)
+        sotorage()
+       } 
+       
+       filltaskonthepage()
+    }
+    function editTask(index){
+        let task = taskobj[index];
+        let newTaskName = prompt(": ادخل العنوان الجديد",task.name);
+        task.name = newTaskName ?? task.name
+        
+        sotorage()
+        filltaskonthepage()
+
+    }
+
+    function checkTask(index){
+        let task = taskobj[index];
+        task.isDone = !task.isDone
+        sotorage()
+        filltaskonthepage()
+    }
+
+    function sotorage(){
+        let taskstring = JSON.stringify(taskobj)
+        localStorage.setItem("taskobj",taskstring)
+    }
+
+</script>
+</html>
